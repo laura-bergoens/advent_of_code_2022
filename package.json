@@ -1,0 +1,23 @@
+{
+  "name": "advent_of_code_2022",
+  "version": "1.0.0",
+  "description": "advent of code 2020",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laura-bergoens/advent_of_code_2022.git"
+  },
+  "author": "Laura Bergoens",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/laura-bergoens/advent_of_code_2022/issues"
+  },
+  "homepage": "https://github.com/laura-bergoens/advent_of_code_2022#readme",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "lodash": "^4.17.21"
+  }
+}

@@ -1,0 +1,10 @@
+# dependencies
+**/node_modules
+
+# IDE
+**/.idea
+
+# system
+.DS_Store
+
+**/.env
