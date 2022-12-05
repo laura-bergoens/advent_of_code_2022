@@ -19,5 +19,8 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21"
+  },
+  "scripts": {
+    "next": "node ./prepare-next-day.js"
   }
 }
