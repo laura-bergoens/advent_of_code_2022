@@ -4,7 +4,9 @@ const _ = require('lodash');
 async function main() {
     try {
         const directories = readdirSync(__dirname).filter((dir) => dir.startsWith('day')).sort();
-        const latestDay = _.toNumber(directories.pop().split('_')[1]);
+        let latestDay;
+        if(directories.length === 0) latestDay = 0;
+        else latestDay = _.toNumber(directories.pop().split('_')[1]);
         const nextDay = latestDay + 1;
         const newDirPath = `${__dirname}/day_${nextDay < 10 ? `0${nextDay}` : nextDay }/`;
         mkdirSync(newDirPath);
