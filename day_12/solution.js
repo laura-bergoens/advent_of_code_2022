@@ -2,7 +2,7 @@ const EASY_INPUT = `${__dirname}/easy_input.txt`;
 const REAL_INPUT = `${__dirname}/real_input.txt`;
 const fs = require('fs');
 const _ = require('lodash');
-const DO_REAL = false;
+const DO_REAL = true;
 const DO_FIRST = true;
 function delay(milliseconds){
     return new Promise(resolve => {
@@ -47,12 +47,26 @@ async function solve1(input) {
             this.x = x;
             this.y = y;
             this.height = height;
+            this.comingFrom = {};
+            this.costToGetThere = 10000;
         }
 
         get coordinates() { return `${this.x}:${this.y}`}
 
         canMoveTo(destCell) {
             return destCell.height <= this.height + 1;
+        }
+
+        outcomeFrom(fromCell) {
+            return this.comingFrom?.[fromCell.coordinates] || null;
+        }
+
+        rememberOutcomeComingFrom(fromCell, hasResult) {
+            this.comingFrom[fromCell.coordinates] = hasResult;
+        }
+
+        updateCost(cost) {
+            this.costToGetThere = cost;
         }
     }
     class Grid {
@@ -111,40 +125,27 @@ async function solve1(input) {
     class Step {
         constructor() {}
 
-        goToGoal(grid, currentCell, fromCell, goalCell, alreadyVisitedCells, validResults, deadCells) {
+        goToGoal(grid, currentCell, fromCell, goalCell, alreadyVisitedCells, validResults) {
             //console.log(`I am ${currentCell.coordinates}`);
-            console.log(`I have visited : ${alreadyVisitedCells.map((cell) => cell.coordinates).join(' ')}`);
+            const cost = alreadyVisitedCells.length;
+            if(cost >= currentCell.costToGetThere) {
+
+                return;
+            }
+            currentCell.updateCost(cost);
+            //console.log(`I have visited : ${alreadyVisitedCells.map((cell) => cell.coordinates).join(' ')}`);
             if(currentCell.coordinates === goalCell.coordinates) {
                 //console.log(`YES GOAL ! ${alreadyVisitedCells.length}`);
                 validResults.push(alreadyVisitedCells.length);
                 return;
             }
-            if(deadCells.includes(currentCell)) {
-                //console.log(`I am ${currentCell.coordinates}, already a dead cell, cya`);
-                return;
-            }
             const possibleCells = grid.getPossibleCellsFor(currentCell);
-            if(possibleCells.length === 0) {
-                deadCells.push(currentCell);
-                console.log('No future, registering myself as dead cell');
-                return;
-            }
             const notYetVisitedCells = possibleCells.filter((cell) => !alreadyVisitedCells.includes(cell));
-            const willVisitAllCellsPossible = possibleCells.length === notYetVisitedCells.length;
             if(notYetVisitedCells.length === 0) return;
             const nextAlreadyVisitedCells = [...alreadyVisitedCells, currentCell];
-            const validResultsBefore = validResults.length;
-            //console.log(`Before ${currentCell.coordinates}, ${validResultsBefore} results`);
-            //console.log(`I am about to visit : ${notYetVisitedCells.map((cell) => cell.coordinates).join(' ')}`);
             for(const cellToVisit of notYetVisitedCells) {
                 const nextStep = new Step();
                 nextStep.goToGoal(grid, cellToVisit, fromCell, goalCell, nextAlreadyVisitedCells, validResults, deadCells);
-            }
-            const validResultsAfter = validResults.length;
-            //console.log(`After ${currentCell.coordinates}, ${validResultsAfter} results`);
-            if((validResultsAfter === validResultsBefore) && willVisitAllCellsPossible) {
-                console.log(`I am ${currentCell.coordinates}, no results, registering myself as dead cell`);
-                deadCells.push(currentCell);
             }
         }
     }
